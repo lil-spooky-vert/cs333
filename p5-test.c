@@ -58,7 +58,7 @@ doSetuidTest (char **cmd)
     printf(1, "File uid: %d, gid: %d\n",
 		    testperms[i][fileuid], testperms[i][filegid]);
     check(chmod(cmd[0], perms[i]));
-    printf(1, "perms set to %s for %s\n", perms[i], cmd[0]);
+    printf(1, "perms set to %d for %s\n", perms[i], cmd[0]);
 
     rc = fork();
     if (rc < 0) {    // fork failed
@@ -73,7 +73,7 @@ doSetuidTest (char **cmd)
     }
     wait();
   }
-  chmod(cmd[0], "0755");  // total hack but necessary. sigh
+  chmod(cmd[0], 00755);  // total hack but necessary. sigh
   printf(1, "Test Passed\n");
   return PASS;
 }
@@ -187,7 +187,7 @@ doChmodTest(char **cmd)
       return NOPASS;
     }
   }
-  chmod(cmd[0], "0755"); // hack
+  chmod(cmd[0], 00755); // hack
   printf(1, "Test Passed\n");
   return PASS;
 }
@@ -247,7 +247,7 @@ doChgrpTest(char **cmd)
                     gid1, gid2);
     return NOPASS;
   }
-  chown(cmd[0], gid1);  // put back the original
+  chgrp(cmd[0], gid1);  // put back the original
   printf(1, "Test Passed\n");
   return PASS;
 }
@@ -294,12 +294,12 @@ doExecTest(char **cmd)
   }
   chown(cmd[0], uid);
   chgrp(cmd[0], gid);
-  chmod(cmd[0], "0755");
+  chmod(cmd[0], 00755);
   printf(1, "Requires user visually confirms PASS/FAIL\n");
   return PASS;
 }
 
-static void
+void
 printMenu(void)
 {
   int i = 0;
@@ -329,7 +329,7 @@ main(int argc, char *argv[])
     printMenu();
     printf(1, "Enter test number: ");
     gets(buf, 5);
-    if (buf[0] == '\n') continue;
+    if ((buf[0] == '\n') || (buf[0] == '\0')) continue;
     select = atoi(buf);
     switch (select) {
 	    case 0: done = TRUE; break;

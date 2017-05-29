@@ -1,3 +1,47 @@
+# All required modifications for CS333 are at the top. All make
+# variables for CS333 are prefixed with 'CS333_'.
+# CS333 flags are clunky because of an absence of '<=' in GNU Make.
+# Could use a shell command but that seems harder to maintain.
+# Set flag to correct CS333 project number: 1, 2, ...
+CS333_PROJECT ?= 0
+CS333_CFLAGS = 
+CS333_MKFSFLAGS =  # Project 5
+CS333_UPROGS =     # required shell commands
+CS333_TPROGS =     # optional test programs
+
+# Enable system call debugging for project 1
+PRINT_SYSCALLS ?= 0
+
+ifeq ($(PRINT_SYSCALLS), 1)
+CS333_CFLAGS += -DPRINT_SYSCALLS
+endif
+
+ifeq ($(CS333_PROJECT), 1)
+CS333_CFLAGS += -DCS333_P1
+CS333_UPROGS += _date
+endif
+
+ifeq ($(CS333_PROJECT), 2)
+CS333_CFLAGS += -DCS333_P1 -DUSE_BUILTINS -DCS333_P2
+CS333_UPROGS += _date _time _ps
+CS333_TPROGS += 
+endif
+
+ifeq ($(CS333_PROJECT), $(filter $(CS333_PROJECT), 3 4))
+CS333_CFLAGS += -DCS333_P1 -DUSE_BUILTINS -DCS333_P2 -DCS333_P3P4
+CS333_UPROGS += _date _time _ps
+CS333_TPROGS +=
+endif
+
+ifeq ($(CS333_PROJECT), 5)
+CS333_CFLAGS += -DUSE_BUILTINS -DCS333_P1 -DCS333_P2 -DCS333_P3P4 -DCS333_P5
+# if P3 and P4 functionality not wanted
+# CS333_CFLAGS += -DCS333_P1 -DUSE_BUILTINS -DCS333_P2 -DCS333_P5
+CS333_UPROGS += _date _time _ps _chgrp  _chmod _chown
+CS333_TPROGS += 
+CS333_MKFSFLAGS += -DCS333_P2 -DCS333_P5
+endif
+
 OBJS = \
 	bio.o\
 	console.o\
@@ -68,12 +112,13 @@ AS = $(TOOLPREFIX)gas
 LD = $(TOOLPREFIX)ld
 OBJCOPY = $(TOOLPREFIX)objcopy
 OBJDUMP = $(TOOLPREFIX)objdump
-CFLAGS = -fno-pic -static -fno-builtin -fno-strict-aliasing -fvar-tracking -fvar-tracking-assignments -O0 -g -Wall -MD -gdwarf-2 -m32 -Werror -fno-omit-frame-pointer
-CFLAGS += $(shell $(CC) -fno-stack-protector -E -x c /dev/null >/dev/null 2>&1 && echo -fno-stack-protector)
-CS333FLAGS =
-# CS333FLAGS += -DPRINT_SYSCALLS     # CS333 to print syscall traces
-# CS333FLAGS += -DUSE_BUILTINS       # CS333 to turn on shell built-ins
-CFLAGS += $(CS333FLAGS)
+CFLAGS = -fno-pic -static -fno-builtin -fno-strict-aliasing -fvar-tracking \
+   -fvar-tracking-assignments -O0 -g -Wall -MD -gdwarf-2 -m32 -Werror -fno-omit-frame-pointer
+CFLAGS += $(shell $(CC) -fno-stack-protector -E -x c /dev/null \
+   >/dev/null 2>&1 && echo -fno-stack-protector)
+
+CFLAGS += $(CS333_CFLAGS)
+
 ASFLAGS = -m32 -gdwarf-2 -Wa,-divide
 # FreeBSD ld wants ``elf_i386_fbsd''
 LDFLAGS += -m $(shell $(LD) -V | grep elf_i386 2>/dev/null)
@@ -129,7 +174,7 @@ _forktest: forktest.o $(ULIB)
 	$(OBJDUMP) -S _forktest > forktest.asm
 
 mkfs: mkfs.c fs.h
-	gcc -Werror -Wall $(CS333FLAGS) -o mkfs mkfs.c
+	gcc -Werror -Wall $(CS333_MKFSFLAGS) -o mkfs mkfs.c
 
 # Prevent deletion of intermediate files, e.g. cat.o, after first build, so
 # that disk image changes after first build are persistent until clean.  More
@@ -142,6 +187,7 @@ UPROGS=\
 	_echo\
 	_forktest\
 	_grep\
+	_halt\
 	_init\
 	_kill\
 	_ln\
@@ -153,10 +199,11 @@ UPROGS=\
 	_usertests\
 	_wc\
 	_zombie\
-	_halt\
 
-fs.img: mkfs README $(UPROGS)
-	./mkfs fs.img README $(UPROGS)
+UPROGS += $(CS333_UPROGS) $(CS333_TPROGS)
+
+fs.img: mkfs README README-PSU $(UPROGS)
+	./mkfs fs.img README README-PSU $(UPROGS)
 
 -include *.d
 
@@ -166,7 +213,7 @@ clean:
 	initcode initcode.out kernel xv6.img fs.img mkfs \
 	.gdbinit \
 	$(UPROGS) \
-	fmt LucidaSans* dist* xv6.pdf  xv6-pdx-kernel.tar.gz
+	fmt LucidaSans* dist* xv6.pdf xv6-pdx.tar.gz
 	rm -f *~ \#*\#
 
 tidy:
@@ -174,7 +221,7 @@ tidy:
 
 # make a printout
 FILES = $(shell grep -v '^\#' runoff.list)
-PRINT = runoff.list runoff.spec README toc.hdr toc.ftr $(FILES)
+PRINT = runoff.list runoff.spec README README-PSU toc.hdr toc.ftr $(FILES)
 
 xv6.pdf: $(PRINT)
 	./runoff
@@ -199,13 +246,13 @@ CPUS := 2
 endif
 QEMUOPTS = -hdb fs.img xv6.img -smp $(CPUS) -m 512 $(QEMUEXTRA)
 
-qemu-nox: fs.img xv6.img
+qemu-nox: fs.img xv6.img 
 	$(QEMU) -nographic $(QEMUOPTS)
 
 .gdbinit: .gdbinit.tmpl
 	sed "s/localhost:1234/localhost:$(GDBPORT)/" < $^ > $@
 
-qemu-nox-gdb: fs.img xv6.img .gdbinit
+qemu-nox-gdb: fs.img xv6.img .gdbinit 
 	@echo "*** Now run 'gdb'." 1>&2
 	$(QEMU) -nographic $(QEMUOPTS) -S $(QEMUGDB)
 
@@ -213,7 +260,7 @@ EXTRA=\
 	mkfs.c ulib.c user.h cat.c echo.c forktest.c grep.c kill.c\
 	ln.c ls.c mkdir.c rm.c stressfs.c usertests.c wc.c zombie.c\
 	printf.c umalloc.c date.h \
-	README dot-bochsrc *.pl toc.* runoff runoff1 runoff.list\
+	README README-PSU dot-bochsrc *.pl toc.* runoff runoff1 runoff.list\
 	.gdbinit.tmpl gdbutil kernel.ld Makefile\
 
 dist:
