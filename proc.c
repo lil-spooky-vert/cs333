@@ -169,7 +169,7 @@ fork(void)
 // Exit the current process.  Does not return.
 // An exited process remains in the zombie state
 // until its parent calls wait() to find out it exited.
-#ifndef CS333_P3P4
+#ifndef CS333_P3P4_NOT_YET
 void
 exit(void)
 {
@@ -221,7 +221,7 @@ exit(void)
 
 // Wait for a child process to exit and return its pid.
 // Return -1 if this process has no children.
-#ifndef CS333_P3P4
+#ifndef CS333_P3P4_NOT_YET
 int
 wait(void)
 {
@@ -278,7 +278,7 @@ wait(void)
 //  - swtch to start running that process
 //  - eventually that process transfers control
 //      via swtch back to the scheduler.
-#ifndef CS333_P3P4
+#ifndef CS333_P3P4_NOT_YET
 // original xv6 scheduler. Use if CS333_P3P4 NOT defined.
 void
 scheduler(void)
@@ -330,7 +330,7 @@ scheduler(void)
 
 // Enter scheduler.  Must hold only ptable.lock
 // and have changed proc->state.
-#ifndef CS333_P3P4
+#ifndef CS333_P3P4_NOT_YET
 void
 sched(void)
 {
@@ -352,7 +352,7 @@ sched(void)
 void
 sched(void)
 {
-
+  
 }
 #endif
 
@@ -424,7 +424,7 @@ sleep(void *chan, struct spinlock *lk)
 }
 
 //PAGEBREAK!
-#ifndef CS333_P3P4
+#ifndef CS333_P3P4_NOT_YET
 // Wake up all processes sleeping on chan.
 // The ptable lock must be held.
 static void
@@ -456,7 +456,7 @@ wakeup(void *chan)
 // Kill the process with the given pid.
 // Process won't exit until it returns
 // to user space (see trap in trap.c).
-#ifndef CS333_P3P4
+#ifndef CS333_P3P4_NOT_YET
 int
 kill(int pid)
 {

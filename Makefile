@@ -1,16 +1,9 @@
-# All required modifications for CS333 are at the top. All make
-# variables for CS333 are prefixed with 'CS333_'.
-# CS333 flags are clunky because of an absence of '<=' in GNU Make.
-# Could use a shell command but that seems harder to maintain.
 # Set flag to correct CS333 project number: 1, 2, ...
 CS333_PROJECT ?= 0
 CS333_CFLAGS = 
-CS333_MKFSFLAGS =  # Project 5
-CS333_UPROGS =     # required shell commands
-CS333_TPROGS =     # optional test programs
-
-# Enable system call debugging for project 1
-PRINT_SYSCALLS ?= 0
+CS333_UPROGS =      # required shell commands
+CS333_TPROGS =      # optional test programs
+PRINT_SYSCALLS ?= 0 # P1 syscall tracing facility
 
 ifeq ($(PRINT_SYSCALLS), 1)
 CS333_CFLAGS += -DPRINT_SYSCALLS
@@ -35,12 +28,16 @@ endif
 
 ifeq ($(CS333_PROJECT), 5)
 CS333_CFLAGS += -DUSE_BUILTINS -DCS333_P1 -DCS333_P2 -DCS333_P3P4 -DCS333_P5
-# if P3 and P4 functionality not wanted
+# if P3 and P4 functionality not desired
 # CS333_CFLAGS += -DCS333_P1 -DUSE_BUILTINS -DCS333_P2 -DCS333_P5
 CS333_UPROGS += _date _time _ps _chgrp  _chmod _chown
-CS333_TPROGS += 
+CS333_TPROGS +=
 CS333_MKFSFLAGS += -DCS333_P2 -DCS333_P5
+else
+CS333_MKFSFLAGS =
 endif
+
+## CS333 students should not have to make modifications past here ##
 
 OBJS = \
 	bio.o\

@@ -1,3 +1,14 @@
+#ifdef CS333_P1
+// remove this stub once you implement the date() system call.
+#include "types.h"
+#include "user.h"
+int
+main(void)
+{
+  printf(1, "Not imlpemented yet.\n");
+  exit();
+}
+#else
 // The code for dayofweek was obtained at:
 // https://en.wikipedia.org/wiki/Determination_of_the_day_of_the_week#Implementation-dependent_methods
 //
@@ -33,3 +44,4 @@ main(int argc, char *argv[])
 
   exit();
 }
+#endif
