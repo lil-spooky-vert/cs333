@@ -181,11 +181,6 @@ doChmodTest(char **cmd)
 		     mode, testmode, cmd[0], i);
       return NOPASS;
     }
-    if (mode == testmode) { 
-      printf(2, "Error! chmod() failed to set permissions correctly. %s, %d\n",
-		      __FILE__, __LINE__);
-      return NOPASS;
-    }
   }
   chmod(cmd[0], 00755); // hack
   printf(1, "Test Passed\n");
