@@ -88,7 +88,6 @@ sys_uptime(void)
 //Turn of the computer
 int sys_halt(void){
   cprintf("Shutting down ...\n");
-// outw (0xB004, 0x0 | 0x2000);  // changed in newest version of QEMU
   outw( 0x604, 0x0 | 0x2000);
   return 0;
 }
