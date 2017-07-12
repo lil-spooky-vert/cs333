@@ -169,7 +169,7 @@ fork(void)
 // Exit the current process.  Does not return.
 // An exited process remains in the zombie state
 // until its parent calls wait() to find out it exited.
-#ifndef CS333_P3P4_NOT_YET
+#ifndef CS333_P3P4
 void
 exit(void)
 {
@@ -221,7 +221,7 @@ exit(void)
 
 // Wait for a child process to exit and return its pid.
 // Return -1 if this process has no children.
-#ifndef CS333_P3P4_NOT_YET
+#ifndef CS333_P3P4
 int
 wait(void)
 {
@@ -278,7 +278,7 @@ wait(void)
 //  - swtch to start running that process
 //  - eventually that process transfers control
 //      via swtch back to the scheduler.
-#ifndef CS333_P3P4_NOT_YET
+#ifndef CS333_P3P4
 // original xv6 scheduler. Use if CS333_P3P4 NOT defined.
 void
 scheduler(void)
@@ -330,7 +330,7 @@ scheduler(void)
 
 // Enter scheduler.  Must hold only ptable.lock
 // and have changed proc->state.
-#ifndef CS333_P3P4_NOT_YET
+#ifndef CS333_P3P4
 void
 sched(void)
 {
@@ -424,7 +424,7 @@ sleep(void *chan, struct spinlock *lk)
 }
 
 //PAGEBREAK!
-#ifndef CS333_P3P4_NOT_YET
+#ifndef CS333_P3P4
 // Wake up all processes sleeping on chan.
 // The ptable lock must be held.
 static void
@@ -456,7 +456,7 @@ wakeup(void *chan)
 // Kill the process with the given pid.
 // Process won't exit until it returns
 // to user space (see trap in trap.c).
-#ifndef CS333_P3P4_NOT_YET
+#ifndef CS333_P3P4
 int
 kill(int pid)
 {
@@ -521,3 +521,45 @@ procdump(void)
     cprintf("\n");
   }
 }
+
+#ifdef CS333_P3P4
+// Do not use with free or ready lists.
+static void
+removeFromStateList(struct proc **sList, struct proc *p)
+{
+  struct proc *p0;
+
+  if (!holding(&ptable.lock))
+    panic("In putOnFreeList with ptable.lock not held\n");
+
+  if (*sList == NULL)
+    panic("In removeFromStateList with NULL list.");
+
+  p0 = *sList;
+  if (p0 == p) {
+    *sList = p->next;
+  } else {
+    while (p0->next != p) {
+      p0 = p0->next;
+      if (p0 == NULL)
+        panic("In removeFromStateList and process is not on list");
+    }
+    p0->next = p->next;
+  }
+  p->next = NULL;
+  return;
+}
+
+// add to a list in O(1) time
+// Cannot be used with ready list
+static void
+addToStateList(struct proc **sList, struct proc *p)
+{
+  if (!holding(&ptable.lock))
+    panic("In addToStateList without ptable.lock held\n");
+
+  p->next = *sList;  // add at head
+  *sList = p;
+  return;
+}
+#endif
