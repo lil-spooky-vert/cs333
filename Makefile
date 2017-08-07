@@ -1,9 +1,10 @@
-# Set flag to CS333 project number: 1, 2, ...
-CS333_PROJECT ?= 0  # 0 == original xv6-pdx distribution functionality
+# Set flag to correct CS333 project number: 1, 2, ...
+# 0 == original xv6-pdx distribution functionality
+CS333_PROJECT ?= 2
 CS333_CFLAGS = 
-CS333_UPROGS =      # required shell commands
-CS333_TPROGS =      # optional test programs
-PRINT_SYSCALLS ?= 0 # P1 syscall tracing facility
+CS333_UPROGS =
+CS333_TPROGS =
+PRINT_SYSCALLS ?= 0
 
 ifeq ($(PRINT_SYSCALLS), 1)
 CS333_CFLAGS += -DPRINT_SYSCALLS
