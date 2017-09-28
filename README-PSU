@@ -124,3 +124,5 @@ scheduler (via yield()) at less than the TPS frequency. This makes MLFQ
 more realistic.
 
 10. Updated atoi() in ulib.c to handle negative numbers
+
+11. Changed Makefile so that PSU students only make modifications at the top.

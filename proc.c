@@ -267,6 +267,7 @@ int
 wait(void)
 {
 
+  return 0;  // placeholder
 }
 #endif
 
@@ -481,6 +482,7 @@ int
 kill(int pid)
 {
 
+  return 0;  // placeholder
 }
 #endif
 

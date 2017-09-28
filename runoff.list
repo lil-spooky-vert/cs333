@@ -2,7 +2,6 @@
 types.h
 param.h
 memlayout.h
-date.h
 defs.h
 x86.h
 asm.h
@@ -77,7 +76,8 @@ sh.c
 bootasm.S
 bootmain.c
 
-# add student files here. Change this comment to be the section header in xv6.pdf
+# Student files
+date.h
 date.c
 time.c
 ps.c
