@@ -208,7 +208,7 @@ doChownTest(char **cmd)
   uid2 = st.uid;
 
   if (uid1 == uid2) {
-    printf(2, "Error! test failed. Old uid: %d, new uid: uid2, should differ\n",
+    printf(2, "Error! test failed. Old uid: %d, new uid: %d, should differ\n",
 		    uid1, uid2);
     return NOPASS;
   }

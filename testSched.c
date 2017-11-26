@@ -1,4 +1,5 @@
 // Test program for CS333 scheduler, project 4.
+#ifdef CS333_P3P4
 
 #include "types.h"
 #include "user.h"
@@ -53,3 +54,4 @@ main(void)
   countForever(1);
   exit();
 }
+#endif
