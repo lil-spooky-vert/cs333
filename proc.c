@@ -70,6 +70,9 @@ found:
   memset(p->context, 0, sizeof *p->context);
   p->context->eip = (uint)forkret;
 
+#ifdef CS333_P1
+  p->start_ticks = ticks;
+#endif
   return p;
 }
 
@@ -506,7 +509,9 @@ procdump(void)
   struct proc *p;
   char *state;
   uint pc[10];
-  
+#ifdef CS333_P1
+    cprintf("\nPID\tState\tName\tElapsed\t  PCs\n");
+#endif 
   for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
     if(p->state == UNUSED)
       continue;
@@ -514,11 +519,33 @@ procdump(void)
       state = states[p->state];
     else
       state = "???";
+    #ifdef CS333_P1
+    cprintf("%d\t%s\t%s", p->pid, state, p->name);
+    #else
     cprintf("%d %s %s", p->pid, state, p->name);
+    #endif
+    #ifdef CS333_P1
+    int p_elapsed;
+    int p_second;
+    int p_milisecond;
+    p_elapsed = ticks - p->start_ticks;
+    p_second = p_elapsed / 1000;
+    p_milisecond = p_elapsed - p_second * 1000;
+    if (p_milisecond >= 100)
+        cprintf("\t%d.%d\t  ", p_second, p_milisecond);
+    else if (p_milisecond >= 10)
+        cprintf("\t%d.0%d\t  ", p_second, p_milisecond);
+    else
+        cprintf("\t%d.00%d\t  ", p_second, p_milisecond);
+    #endif
     if(p->state == SLEEPING){
       getcallerpcs((uint*)p->context->ebp+2, pc);
       for(i=0; i<10 && pc[i] != 0; i++)
-        cprintf(" %p", pc[i]);
+        #ifdef CS333_P1
+          cprintf("%p ", pc[i]);
+        #else
+          cprintf(" %p", pc[i]);
+        #endif
     }
     cprintf("\n");
   }
