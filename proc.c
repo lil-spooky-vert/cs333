@@ -530,7 +530,7 @@ procdump(void)
     int p_milisecond;
     p_elapsed = ticks - p->start_ticks;
     p_second = p_elapsed / 1000;
-    p_milisecond = p_elapsed - p_second * 1000;
+    p_milisecond = p_elapsed % 1000;
     if (p_milisecond >= 100)
         cprintf("\t%d.%d\t  ", p_second, p_milisecond);
     else if (p_milisecond >= 10)
