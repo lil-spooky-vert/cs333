@@ -16,3 +16,9 @@ bootother
 bootother.out
 parport.out
 fmt
+dist-test/
+dist/
+mkfs
+entryother
+initcode
+initcode.out
