@@ -102,6 +102,11 @@ userinit(void)
   safestrcpy(p->name, "initcode", sizeof(p->name));
   p->cwd = namei("/");
 
+#ifdef CS333_P2
+  p->uid = DEFUID;
+  p->gid = DEFGID;
+#endif
+
   p->state = RUNNABLE;
 }
 
@@ -148,6 +153,10 @@ fork(void)
   np->sz = proc->sz;
   np->parent = proc;
   *np->tf = *proc->tf;
+#ifdef CS333_P2
+  np->gid = proc->gid;
+  np->uid = proc->uid;
+#endif
 
   // Clear %eax so that fork returns 0 in the child.
   np->tf->eax = 0;

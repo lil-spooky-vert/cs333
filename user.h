@@ -27,6 +27,13 @@ int halt(void);
 #ifdef CS333_P1
 int date(struct rtcdate*);
 #endif
+#ifdef CS333_P2
+uint getuid(void); // UID of the current process
+uint getgid(void); // GID of the current process
+uint getppid(void); // process ID of the parent process
+int setuid(uint); // set UID
+int setgid(uint); // set GID
+#endif
 // ulib.c
 int stat(char*, struct stat*);
 char* strcpy(char*, char*);
