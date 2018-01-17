@@ -73,6 +73,10 @@ found:
 #ifdef CS333_P1
   p->start_ticks = ticks;
 #endif
+#ifdef CS333_P2
+  p->cpu_ticks_total = 0;
+  p->cpu_ticks_in = 0;
+#endif
   return p;
 }
 
@@ -317,6 +321,9 @@ scheduler(void)
       proc = p;
       switchuvm(p);
       p->state = RUNNING;
+#ifdef CS333_P2
+    p->cpu_ticks_in = ticks;
+#endif
       swtch(&cpu->scheduler, proc->context);
       switchkvm();
 
@@ -358,6 +365,9 @@ sched(void)
   if(readeflags()&FL_IF)
     panic("sched interruptible");
   intena = cpu->intena;
+#ifdef CS333_P2
+    proc->cpu_ticks_total += ticks - proc->cpu_ticks_in;
+#endif
   swtch(&proc->context, cpu->scheduler);
   cpu->intena = intena;
 }
@@ -365,7 +375,7 @@ sched(void)
 void
 sched(void)
 {
-  
+
 }
 #endif
 
