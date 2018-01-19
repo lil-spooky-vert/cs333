@@ -33,6 +33,7 @@ uint getgid(void); // GID of the current process
 uint getppid(void); // process ID of the parent process
 int setuid(uint); // set UID
 int setgid(uint); // set GID
+int getprocs(uint); // syscall for ps
 #endif
 // ulib.c
 int stat(char*, struct stat*);
@@ -44,6 +45,6 @@ void printf(int, char*, ...);
 char* gets(char*, int max);
 uint strlen(char*);
 void* memset(void*, int, uint);
-void* malloc(uint);
+void* malloc(uint, struct uproc*);
 void free(void*);
 int atoi(const char*);
