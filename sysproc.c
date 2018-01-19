@@ -132,7 +132,7 @@ sys_setuid(void)
     int arg;
     if (argint(0, &arg) < 0)
         return -1;
-    if(arg < 0 || arg > 32767)
+    if(arg < 0 || arg > MAXUID)
         return -2;
     proc->uid = arg;
     return 0;
@@ -144,7 +144,7 @@ sys_setgid(void)
     int arg;
     if (argint(0, &arg) < 0)
         return -1;
-    if(arg < 0 || arg > 32767) 
+    if(arg < 0 || arg > MAXGID) 
         return -2;
     proc->gid = arg;
     return 0;

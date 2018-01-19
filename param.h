@@ -15,4 +15,6 @@
 #ifdef CS333_P2
 #define DEFUID        1  // default UID for init
 #define DEFGID        1  // default GID for init
+#define MAXUID    32767  // max UID
+#define MAXGID   MAXUID  // max GID
 #endif
