@@ -6,6 +6,9 @@
 #include "x86.h"
 #include "proc.h"
 #include "spinlock.h"
+#ifdef CS333_P2
+#include "uproc.h"
+#endif
 
 struct {
   struct spinlock lock;
@@ -531,41 +534,86 @@ procdump(void)
 #ifdef CS333_P1
     cprintf("\nPID\tState\tName\tElapsed\t  PCs\n");
 #endif 
-  for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
-    if(p->state == UNUSED)
-      continue;
-    if(p->state >= 0 && p->state < NELEM(states) && states[p->state])
-      state = states[p->state];
-    else
-      state = "???";
-    #ifdef CS333_P1
-    cprintf("%d\t%s\t%s", p->pid, state, p->name);
-    #else
-    cprintf("%d %s %s", p->pid, state, p->name);
-    #endif
-    #ifdef CS333_P1
-    int p_elapsed;
-    int p_second;
-    int p_milisecond;
-    p_elapsed = ticks - p->start_ticks;
-    p_second = p_elapsed / 1000;
-    p_milisecond = p_elapsed % 1000;
-    if (p_milisecond >= 100)
+    for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+      if(p->state == UNUSED)
+        continue;
+      if(p->state >= 0 && p->state < NELEM(states) && states[p->state])
+        state = states[p->state];
+      else
+        state = "???";
+#ifdef CS333_P1
+      cprintf("%d\t%s\t%s", p->pid, state, p->name);
+#else
+      cprintf("%d %s %s", p->pid, state, p->name);
+#endif
+#ifdef CS333_P1
+      int p_elapsed;
+      int p_second;
+      int p_milisecond;
+      p_elapsed = ticks - p->start_ticks;
+      p_second = p_elapsed / 1000;
+      p_milisecond = p_elapsed % 1000;
+      if (p_milisecond >= 100)
         cprintf("\t%d.%d\t  ", p_second, p_milisecond);
-    else if (p_milisecond >= 10)
+      else if (p_milisecond >= 10)
         cprintf("\t%d.0%d\t  ", p_second, p_milisecond);
-    else
+      else
         cprintf("\t%d.00%d\t  ", p_second, p_milisecond);
-    #endif
-    if(p->state == SLEEPING){
-      getcallerpcs((uint*)p->context->ebp+2, pc);
-      for(i=0; i<10 && pc[i] != 0; i++)
-        #ifdef CS333_P1
+#endif
+      if(p->state == SLEEPING){
+        getcallerpcs((uint*)p->context->ebp+2, pc);
+        for(i=0; i<10 && pc[i] != 0; i++)
+#ifdef CS333_P1
           cprintf("%p ", pc[i]);
-        #else
-          cprintf(" %p", pc[i]);
-        #endif
+#else
+        cprintf(" %p", pc[i]);
+#endif
     }
     cprintf("\n");
   }
 }
+
+#ifdef CS333_P2
+int
+getprocs(uint max, struct uproc * table)
+{
+  int i, j;
+  acquire(&ptable.lock);
+  for (i = 0, j = 0; i < max; ++i)
+  {
+    if (ptable.proc[i].state != UNUSED && ptable.proc[i].state != EMBRYO)
+    {
+      table[j].pid = ptable.proc[i].pid;
+      table[j].uid = ptable.proc[i].uid;
+      table[j].gid = ptable.proc[i].gid;
+      if (ptable.proc[i].pid == 1)
+        table[j].ppid = 1;
+      else
+        table[j].ppid = ptable.proc[i].parent->pid;
+      table[j].elapsed_ticks = ticks - ptable.proc[i].start_ticks;
+      table[j].CPU_total_ticks = ptable.proc[i].cpu_ticks_total;
+      table[j].size = ptable.proc[i].sz;
+      safestrcpy(table[j].name, ptable.proc[i].name, sizeof(ptable.proc[i].name));
+      switch(ptable.proc[i].state) {
+        case SLEEPING:
+          safestrcpy(table[j].state, "SLEEPING", 8);
+          break;
+        case RUNNABLE:
+          safestrcpy(table[j].state, "RUNNABLE", 8); 
+          break;
+        case RUNNING:
+          safestrcpy(table[j].state, "RUNNING", 7);
+          break;
+        case ZOMBIE:
+          safestrcpy(table[j].state, "ZOMBIE", 6);
+          break;
+        default:
+          break;
+      }
+      ++j;
+    }
+  }
+  release(&ptable.lock);
+  return j;
+}
+#endif

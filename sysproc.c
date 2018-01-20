@@ -6,6 +6,9 @@
 #include "memlayout.h"
 #include "mmu.h"
 #include "proc.h"
+#ifdef CS333_P2
+#include "uproc.h"
+#endif
 
 int
 sys_fork(void)
@@ -61,7 +64,7 @@ sys_sleep(void)
 {
   int n;
   uint ticks0;
-  
+
   if(argint(0, &n) < 0)
     return -1;
   ticks0 = ticks;
@@ -75,12 +78,12 @@ sys_sleep(void)
 }
 
 // return how many clock tick interrupts have occurred
-// since start. 
+// since start.
 int
 sys_uptime(void)
 {
   uint xticks;
-  
+
   xticks = ticks;
   return xticks;
 }
@@ -97,11 +100,11 @@ sys_halt(void){
 int
 sys_date(void)
 {
-    struct rtcdate *d;
-    if (argptr(0, (void*)&d, sizeof(struct rtcdate)) < 0)
-        return -1;
-    cmostime(d);
-    return 0;
+  struct rtcdate *d;
+  if (argptr(0, (void*)&d, sizeof(struct rtcdate)) < 0)
+    return -1;
+  cmostime(d);
+  return 0;
 }
 #endif
 
@@ -129,29 +132,38 @@ sys_getppid(void)
 int
 sys_setuid(void)
 {
-    int arg;
-    if (argint(0, &arg) < 0)
-        return -1;
-    if(arg < 0 || arg > MAXUID)
-        return -2;
-    proc->uid = arg;
-    return 0;
+  int arg;
+  if (argint(0, &arg) < 0)
+    return -1;
+  if(arg < 0 || arg > MAXUID)
+    return -2;
+  proc->uid = arg;
+  return 0;
 }
 
 int
 sys_setgid(void)
 {
-    int arg;
-    if (argint(0, &arg) < 0)
-        return -1;
-    if(arg < 0 || arg > MAXGID) 
-        return -2;
-    proc->gid = arg;
-    return 0;
+  int arg;
+  if (argint(0, &arg) < 0)
+    return -1;
+  if(arg < 0 || arg > MAXGID)
+    return -2;
+  proc->gid = arg;
+  return 0;
 }
 int
 sys_getprocs(void)
 {
+  int max;
+  struct uproc * table;
 
+  if (argint(0, &max) < 0)
+    return -1;
+  if (argptr(1, (void*)&table, sizeof(struct uproc)) < 0)
+    return -1;
+  if (max > NPROC)
+    max = NPROC;
+  return getprocs(max, table);
 }
 #endif

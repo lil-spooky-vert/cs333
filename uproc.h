@@ -1,6 +1,6 @@
 #define STRMAX 32
 
-struct urpoc {
+struct uproc {
     uint pid;
     uint uid;
     uint gid;
