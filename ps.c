@@ -14,12 +14,17 @@ main(void)
   if (table_size >= 1)
   {
     int i;
-    printf(2, "\nPID\tName\tUID\tGID\tPPID\tElapsed\tCPU\tState\tSize\n");
+    printf(1, "\nPID\tName\tUID\tGID\tPPID\tElapsed\t\tCPU\tState\tSize\n");
     for (i = 0; i < table_size; ++i)
     {
-      printf(2, "%d\t%s\t%d\t%d\t%d\t%d\t%d\t%s\t%d\n", table[i].pid, table[i].name, table[i].uid,
+      /*printf(1, "%d\t%s\t%d\t%d\t%d\t%d\t%d\t%s\t%d\n", table[i].pid, table[i].name, table[i].uid,
           table[i].gid, table[i].ppid, table[i].elapsed_ticks, table[i].CPU_total_ticks, table[i].state,
-          table[i].size);
+          table[i].size);*/
+      printf(1, "%d\t%s\t%d\t%d\t%d\t", table[i].pid, table[i].name, table[i].uid, table[i].gid, table[i].ppid);
+      zeropad(table[i].elapsed_ticks);
+      printf(1, "\t\t");
+      zeropad(table[i].CPU_total_ticks);
+      printf(1, "\t%s\t%d\n", table[i].state, table[i].size);
     }
   }
   else

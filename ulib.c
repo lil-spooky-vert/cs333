@@ -123,3 +123,20 @@ memmove(void *vdst, void *vsrc, int n)
     *dst++ = *src++;
   return vdst;
 }
+
+#ifdef CS333_P2
+// helper function to output fractional numbers
+void
+zeropad(uint x)
+{
+  int miliseconds;
+  miliseconds = x % 1000;
+  printf(1,"%d.", x / 1000);
+  if (miliseconds >= 100)
+    printf(1,"%d", miliseconds);
+  else if (miliseconds >=10)
+    printf(1,"0%d", miliseconds);
+  else
+    printf(1, "00%d", miliseconds);
+};
+#endif

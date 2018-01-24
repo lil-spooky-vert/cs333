@@ -520,6 +520,23 @@ static char *states[] = {
   [ZOMBIE]    "zombie"
 };
 
+#ifdef CS333_P2
+// helper function to output fractional numbers
+void
+zeropad(uint x)
+{
+  int miliseconds;
+  miliseconds = x % 1000;
+  cprintf("%d.", x / 1000);
+  if (miliseconds >= 100)
+    cprintf("%d", miliseconds);
+  else if (miliseconds >=10)
+    cprintf("0%d", miliseconds);
+  else
+    cprintf("00%d", miliseconds);
+};
+#endif
+
 //PAGEBREAK: 36
 // Print a process listing to console.  For debugging.
 // Runs when user types ^P on console.
@@ -531,9 +548,13 @@ procdump(void)
   struct proc *p;
   char *state;
   uint pc[10];
+#ifndef CS333_P2
 #ifdef CS333_P1
-    cprintf("\nPID\tState\tName\tElapsed\t  PCs\n");
-#endif 
+  cprintf("\nPID\tState\tName\tElapsed\t  PCs\n");
+#endif
+#else
+  cprintf("\nPID\tName\tUID\tGID\tPPID\tElapsed\t\tCPU\tState\tSize\tPCs\n");
+#endif
     for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
       if(p->state == UNUSED)
         continue;
@@ -541,6 +562,7 @@ procdump(void)
         state = states[p->state];
       else
         state = "???";
+#ifndef CS333_P2
 #ifdef CS333_P1
       cprintf("%d\t%s\t%s", p->pid, state, p->name);
 #else
@@ -567,6 +589,21 @@ procdump(void)
           cprintf("%p ", pc[i]);
 #else
         cprintf(" %p", pc[i]);
+#endif
+#else
+      cprintf("%d\t%s\t%d\t%d\t", p->pid, p->name, p->uid, p->gid);
+      if (p->pid == 1)
+        cprintf("%d\t", 1);
+      else
+        cprintf("%d\t", p->parent->pid);
+      zeropad(ticks - p->start_ticks);
+      cprintf("\t\t");
+      zeropad(p->cpu_ticks_total);
+      cprintf("\t%s\t%d\t%d\t", state, p->sz, p->sz);
+      if(p->state == SLEEPING){
+        getcallerpcs((uint*)p->context->ebp+2, pc);
+      for(i=0; i<10 && pc[i] != 0; i++)
+        cprintf("%p ", pc[i]);
 #endif
     }
     cprintf("\n");
@@ -596,19 +633,19 @@ getprocs(uint max, struct uproc * table)
       safestrcpy(table[j].name, ptable.proc[i].name, sizeof(ptable.proc[i].name));
       switch(ptable.proc[i].state) {
         case SLEEPING:
-          safestrcpy(table[j].state, "SLEEPING", 8);
+          safestrcpy(table[j].state, states[SLEEPING], 8);
           break;
         case RUNNABLE:
-          safestrcpy(table[j].state, "RUNNABLE", 8); 
+          safestrcpy(table[j].state, states[RUNNABLE], 8); 
           break;
         case RUNNING:
-          safestrcpy(table[j].state, "RUNNING", 7);
+          safestrcpy(table[j].state, states[RUNNING], 7);
           break;
         case ZOMBIE:
-          safestrcpy(table[j].state, "ZOMBIE", 6);
+          safestrcpy(table[j].state, states[ZOMBIE], 6);
           break;
         default:
-          break;
+          break; // should this be exit()? or return?
       }
       ++j;
     }

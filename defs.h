@@ -123,6 +123,7 @@ void            wakeup(void*);
 void            yield(void);
 #ifdef CS333_P2
 int             getprocs(uint, struct uproc *);
+void            zeropad(uint);
 #endif
 // swtch.S
 void            swtch(struct context**, struct context*);

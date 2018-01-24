@@ -51,3 +51,6 @@ void* memset(void*, int, uint);
 void* malloc(uint);
 void free(void*);
 int atoi(const char*);
+#ifdef CS333_P2
+void zeropad(uint);
+#endif
