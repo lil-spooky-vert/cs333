@@ -7,7 +7,7 @@ int
 main(void)
 {
   //printf(1, "Not imlpemented yet.\n");
-  uint table_size;
+  int table_size;
   struct uproc * table;
   table = malloc(PMAX * sizeof(struct uproc));
   table_size = getprocs(PMAX, table);

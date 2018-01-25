@@ -631,22 +631,7 @@ getprocs(uint max, struct uproc * table)
       table[j].CPU_total_ticks = ptable.proc[i].cpu_ticks_total;
       table[j].size = ptable.proc[i].sz;
       safestrcpy(table[j].name, ptable.proc[i].name, sizeof(ptable.proc[i].name));
-      switch(ptable.proc[i].state) {
-        case SLEEPING:
-          safestrcpy(table[j].state, states[SLEEPING], 8);
-          break;
-        case RUNNABLE:
-          safestrcpy(table[j].state, states[RUNNABLE], 8); 
-          break;
-        case RUNNING:
-          safestrcpy(table[j].state, states[RUNNING], 7);
-          break;
-        case ZOMBIE:
-          safestrcpy(table[j].state, states[ZOMBIE], 6);
-          break;
-        default:
-          break; // should this be exit()? or return?
-      }
+      safestrcpy(table[j].state, states[ptable.proc[i].state], 8);
       ++j;
     }
   }
