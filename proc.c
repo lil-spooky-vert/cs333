@@ -616,10 +616,8 @@ getprocs(uint max, struct uproc * table)
 {
   int i, j;
   acquire(&ptable.lock);
-  for (i = 0, j = 0; i < max; ++i)
-  {
-    if (ptable.proc[i].state != UNUSED && ptable.proc[i].state != EMBRYO)
-    {
+  for (i = 0, j = 0; i < max; ++i){
+    if (ptable.proc[i].state != UNUSED && ptable.proc[i].state != EMBRYO){
       table[j].pid = ptable.proc[i].pid;
       table[j].uid = ptable.proc[i].uid;
       table[j].gid = ptable.proc[i].gid;

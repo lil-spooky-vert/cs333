@@ -6,20 +6,14 @@
 int
 main(void)
 {
-  //printf(1, "Not imlpemented yet.\n");
   int table_size;
   struct uproc * table;
   table = malloc(PMAX * sizeof(struct uproc));
   table_size = getprocs(PMAX, table);
-  if (table_size >= 1)
-  {
+  if (table_size >= 1){
     int i;
     printf(1, "\nPID\tName\tUID\tGID\tPPID\tElapsed\t\tCPU\tState\tSize\n");
-    for (i = 0; i < table_size; ++i)
-    {
-      /*printf(1, "%d\t%s\t%d\t%d\t%d\t%d\t%d\t%s\t%d\n", table[i].pid, table[i].name, table[i].uid,
-          table[i].gid, table[i].ppid, table[i].elapsed_ticks, table[i].CPU_total_ticks, table[i].state,
-          table[i].size);*/
+    for (i = 0; i < table_size; ++i){
       printf(1, "%d\t%s\t%d\t%d\t%d\t", table[i].pid, table[i].name, table[i].uid, table[i].gid, table[i].ppid);
       zeropad(table[i].elapsed_ticks);
       printf(1, "\t\t");
