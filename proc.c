@@ -553,7 +553,7 @@ procdump(void)
   cprintf("\nPID\tState\tName\tElapsed\t  PCs\n");
 #endif
 #else
-  cprintf("\nPID\tName\tUID\tGID\tPPID\tElapsed\t\tCPU\tState\tSize\tPCs\n");
+  cprintf("\nPID\tName\t\tUID\tGID\tPPID\tElapsed\t\tCPU\tState\tSize\tPCs\n");
 #endif
     for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
       if(p->state == UNUSED)
@@ -591,7 +591,7 @@ procdump(void)
         cprintf(" %p", pc[i]);
 #endif
 #else
-      cprintf("%d\t%s\t%d\t%d\t", p->pid, p->name, p->uid, p->gid);
+      cprintf("%d\t%s\t\t%d\t%d\t", p->pid, p->name, p->uid, p->gid);
       if (p->pid == 1)
         cprintf("%d\t", 1);
       else

@@ -7,12 +7,14 @@ main(int argc, char *argv[])
   int start_time, end_time, fd[2], n;
   n = 0;
   uint pid;
+  start_time = uptime();
   if (argc == 1){
-    printf(1, "ran in 0.000 seconds\n");
+    printf(1, " ran in ");
+    zeropad(uptime() - start_time);
+    printf(1, " seconds\n");
     exit();
   }
   pipe(fd); //TODO: check error
-  start_time = uptime();
   if ((pid = fork()) == 0){
       if(exec(argv[1], &argv[1]) < 0){
         close(fd[0]);
@@ -29,7 +31,7 @@ main(int argc, char *argv[])
   read(fd[0], &n, sizeof(int));  // check for errors
   if (n < 0){
     close(fd[0]);
-    printf(1, "ran in ");
+    printf(1, " ran in ");
     zeropad(end_time - start_time);
     printf(1, " seconds\n");
     exit();
