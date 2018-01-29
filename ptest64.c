@@ -12,10 +12,10 @@ testgetproc(uint size)
   table_size = getprocs(size, table);
   if (table_size >= 1){
     int i, j;
-    printf(1, "PID  Name\tPID  Name\tPID  Name\tPID  Name\n");
+    printf(1, "PID\tName\t\tPID\tName\t\tPID\tName\t\tPID\tName\n");
     for (i = 0; i < table_size; i += 4){
       for (j = 0; j < 4 && i+j < table_size; j++){
-        printf(1, "%d  %s\t\t", table[i+j].pid, table[i+j].name);
+        printf(1, "%d\t%s\t\t", table[i+j].pid, table[i+j].name);
       }
       printf(1, "\n");
     }
@@ -27,7 +27,8 @@ testgetproc(uint size)
 int
 main (int argc, char * argv[])
 {
-  int pid;
+  int pid, i;
+  int tests[] = {1, 16, 64, 72};
   while((pid = fork()) != -1)
   {
     if (pid != 0)
@@ -37,11 +38,13 @@ main (int argc, char * argv[])
       exit();
     }
   }
-  testgetproc(1);
-  testgetproc(16);
-  testgetproc(64);
-  testgetproc(72);
-  sleep(10000);
+  for (i = 0; i < 4; ++i){
+    int result;
+    printf(1, "Table size %d\n", tests[i]);
+    result = testgetproc(tests[i]);
+    printf(1, "Received %d processes\n", result);
+  }
+  sleep(3000);
   exit();
 }
 #endif

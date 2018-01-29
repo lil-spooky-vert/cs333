@@ -20,9 +20,10 @@ main(void)
       zeropad(table[i].CPU_total_ticks);
       printf(1, "\t%s\t%d\n", table[i].state, table[i].size);
     }
+  free(table);
   }
   else
-    printf(1, "something didn't happen %d\n", table_size);
+    printf(2, "There was an error!\n");
   free(table);
   exit();
 }

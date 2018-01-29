@@ -91,4 +91,6 @@ testsetuid.c
 testSched.c
 uproc.h
 testuidgid.c
-getproctest.c
+ptest64.c
+cputime.c
+wait.c

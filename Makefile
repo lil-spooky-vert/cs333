@@ -1,6 +1,6 @@
 # Set flag to correct CS333 project number: 1, 2, ...
 # 0 == original xv6-pdx distribution functionality
-CS333_PROJECT ?= 2
+CS333_PROJECT ?= 0
 CS333_CFLAGS = 
 CS333_UPROGS =
 CS333_TPROGS =
@@ -197,7 +197,9 @@ UPROGS=\
 	_wc\
 	_zombie\
 	_testuidgid\
-	_getproctest\
+	_ptest64\
+	_cputime\
+	_wait\
 
 UPROGS += $(CS333_UPROGS) $(CS333_TPROGS)
 
