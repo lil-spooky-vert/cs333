@@ -190,7 +190,9 @@ void
 consoleintr(int (*getc)(void))
 {
   int c, doprocdump = 0;
-
+#ifdef CS333_P3P4
+  int dofreedump = 0;
+#endif
   acquire(&cons.lock);
   while((c = getc()) >= 0){
     switch(c){
@@ -210,6 +212,11 @@ consoleintr(int (*getc)(void))
         consputc(BACKSPACE);
       }
       break;
+#ifdef CS333_P3P4
+    case C('F'):  // Display Free Procs
+      dofreedump = 1;
+      break;
+#endif
     default:
       if(c != 0 && input.e-input.r < INPUT_BUF){
         c = (c == '\r') ? '\n' : c;
@@ -227,6 +234,11 @@ consoleintr(int (*getc)(void))
   if(doprocdump) {
     procdump();  // now call procdump() wo. cons.lock held
   }
+#ifdef CS333_P3P4
+  if(dofreedump) {
+    freedump();
+  }
+#endif
 }
 
 int

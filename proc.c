@@ -808,3 +808,21 @@ getprocs(uint max, struct uproc * table)
   return j;
 }
 #endif
+
+#ifdef CS333_P3P4
+void
+freedump()
+{
+  int count;
+  struct proc * current;
+  count = 0;
+  acquire(&ptable.lock);
+  current = ptable.pLists.free;
+  while(current){
+    count++;
+    current = current->next;
+  }
+  release(&ptable.lock);
+  cprintf("%d processes\n", count);
+}
+#endif
