@@ -104,7 +104,24 @@ userinit(void)
 {
   struct proc *p;
   extern char _binary_initcode_start[], _binary_initcode_size[];
-  
+
+#ifdef CS333_P3P4
+  struct proc * x;
+  acquire(&ptable.lock);
+  for (x = ptable.proc; x < ptable.proc + NPROC - 1; x++){
+    x->state = UNUSED;
+    x->next = x + 1;
+  }
+  x->next= 0;
+  x->state = UNUSED;
+  ptable.pLists.free = ptable.proc;
+  ptable.pLists.ready = 0;
+  ptable.pLists.sleep = 0;
+  ptable.pLists.zombie = 0;
+  ptable.pLists.running = 0;
+  ptable.pLists.embryo = 0;
+  release(&ptable.lock);
+#endif
   p = allocproc();
   initproc = p;
   if((p->pgdir = setupkvm()) == 0)
