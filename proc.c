@@ -10,9 +10,22 @@
 #include "uproc.h"
 #endif
 
+#ifdef CS333_P3P4
+struct StateLists {
+  struct proc * ready;
+  struct proc * free;
+  struct proc * sleep;
+  struct proc * sleep;
+  struct proc * zombie;
+  struct proc * embryo;
+#endif
+
 struct {
   struct spinlock lock;
   struct proc proc[NPROC];
+#ifdef CS333_P3P4
+  struct StateLists pLists;
+#endif
 } ptable;
 
 static struct proc *initproc;
