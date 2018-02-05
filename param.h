@@ -18,3 +18,6 @@
 #define MAXUID    32767  // max UID
 #define MAXGID   MAXUID  // max GID
 #endif
+#ifdef CS333_P3P4
+#define NULL          0  // sets NULL value
+#endif
