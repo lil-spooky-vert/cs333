@@ -192,6 +192,7 @@ consoleintr(int (*getc)(void))
   int c, doprocdump = 0;
 #ifdef CS333_P3P4
   int dofreedump = 0;
+  int doreadydump = 0;
 #endif
   acquire(&cons.lock);
   while((c = getc()) >= 0){
@@ -216,6 +217,9 @@ consoleintr(int (*getc)(void))
     case C('F'):  // Display Free Procs
       dofreedump = 1;
       break;
+    case C('R'):  // Display Ready Procs
+      doreadydump = 1;
+      break;
 #endif
     default:
       if(c != 0 && input.e-input.r < INPUT_BUF){
@@ -237,6 +241,9 @@ consoleintr(int (*getc)(void))
 #ifdef CS333_P3P4
   if(dofreedump) {
     freedump();
+  }
+  if(doreadydump) {
+    readydump();
   }
 #endif
 }

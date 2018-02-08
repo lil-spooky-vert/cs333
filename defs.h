@@ -127,6 +127,7 @@ void            zeropad(uint);
 #endif
 #ifdef CS333_P3P4
 void            freedump(void);
+void            readydump(void);
 #endif
 // swtch.S
 void            swtch(struct context**, struct context*);
