@@ -200,6 +200,9 @@ UPROGS=\
 	_ptest64\
 	_cputime\
 	_wait\
+	_zfree\
+	_kfree\
+	_rrobin\
 
 UPROGS += $(CS333_UPROGS) $(CS333_TPROGS)
 

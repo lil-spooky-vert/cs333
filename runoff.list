@@ -94,3 +94,6 @@ testuidgid.c
 ptest64.c
 cputime.c
 wait.c
+zfree.c
+kfree.c
+rrobin.c
