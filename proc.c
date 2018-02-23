@@ -440,6 +440,8 @@ wait(void)
        havekids = have_kids(ptable.pLists.sleep, temp);
      if (!havekids)
        havekids = have_kids(ptable.pLists.running, temp);
+     if (!havekids)
+       havekids = have_kids(ptable.pLists.embryo, temp);
     }
     else{
       while(p){
@@ -782,7 +784,8 @@ kill(int pid)
 
   acquire(&ptable.lock);
   if ((p = pid_search(ptable.pLists.ready, pid)) || (p = pid_search(ptable.pLists.running, pid))
-      || (p = pid_search(ptable.pLists.sleep, pid)) || (p = pid_search(ptable.pLists.zombie, pid))) {
+      || (p = pid_search(ptable.pLists.sleep, pid)) || (p = pid_search(ptable.pLists.zombie, pid))
+      || (p = pid_search(ptable.pLists.embryo, pid))) {
     p->killed = 1;
     if(p->state == SLEEPING){
       if(!remove_from_list(&ptable.pLists.sleep, p))
