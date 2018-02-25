@@ -901,7 +901,11 @@ procdump(void)
   cprintf("\nPID\tState\tName\tElapsed\t  PCs\n");
 #endif
 #else
+#ifndef CS333_P3P4
   cprintf("\nPID\tName\t\tUID\tGID\tPPID\tElapsed\t\tCPU\tState\tSize\tPCs\n");
+#else
+  cprintf("\nPID\tName\t\tUID\tGID\tPPID\tPrio\tElapsed\t\tCPU\tState\tSize\tPCs\n");
+#endif
 #endif
     for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
       if(p->state == UNUSED)
@@ -944,6 +948,9 @@ procdump(void)
         cprintf("%d\t", 1);
       else
         cprintf("%d\t", p->parent->pid);
+#ifdef CS333_P3P4
+      cprintf("%d\t", p->priority);
+#endif
       zeropad(ticks - p->start_ticks);
       cprintf("\t\t");
       zeropad(p->cpu_ticks_total);
@@ -973,6 +980,9 @@ getprocs(uint max, struct uproc * table)
         table[j].ppid = 1;
       else
         table[j].ppid = ptable.proc[i].parent->pid;
+#ifdef CS333_P3P4
+      table[j].prio = ptable.proc[i].priority;
+#endif
       table[j].elapsed_ticks = ticks - ptable.proc[i].start_ticks;
       table[j].CPU_total_ticks = ptable.proc[i].cpu_ticks_total;
       table[j].size = ptable.proc[i].sz;
