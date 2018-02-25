@@ -40,6 +40,7 @@ int getprocs(uint, struct uproc *); // syscall for ps
 #endif
 #ifdef CS333_P3P4
 int setpriority(int, int);
+//int setname(char *);
 #endif
 // ulib.c
 int stat(char*, struct stat*);

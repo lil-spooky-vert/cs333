@@ -22,4 +22,5 @@
 #define NULL          0  // sets NULL value
 #define MAX           3  // max priority value P4
 #define BUDGET        10 // tick budget P4
+#define TICKS_TO_PROMOTE 100
 #endif

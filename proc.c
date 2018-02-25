@@ -11,11 +11,6 @@
 #endif
 
 
-//P4
-#ifdef CS333_P3P4
-#define TICKS_TO_PROMOTE 100
-#endif
-
 #ifdef CS333_P3P4
 struct StateLists {
   struct proc * ready[MAX + 1];
@@ -598,6 +593,10 @@ scheduler(void)
       if ((p = pop(&ptable.pLists.ready[priority]))) // p4
       {
         assertState(p, RUNNABLE);
+        if (p->priority != priority){
+          cprintf("%s has priority of %d, found in %d\n", p->name, p->priority, priority);
+          panic("broken invariant");
+        } 
         idle = 0;  // not idle this timeslice
         proc = p;
         switchuvm(p);
@@ -1109,7 +1108,7 @@ tail_add(struct proc ** p)
     return 0;
   if ((*p)->budget == 0){
     (*p)->budget = BUDGET;
-    if ((*p)->priority == MAX)
+    if ((*p)->priority != MAX)
       (*p)->priority++;
   }
   current = ptable.pLists.ready[(*p)->priority];
@@ -1240,7 +1239,7 @@ static void
 budget_calc(struct proc ** p)
 {
   (*p)->budget = (*p)->budget - (ticks - (*p)->cpu_ticks_in);
-  if ((*p)->budget >= BUDGET)
+  if ((*p)->budget > BUDGET)
     (*p)->budget = 0;
 }
 
@@ -1262,12 +1261,14 @@ setpriority(int pid, int priority)
   struct proc * p;
   int i;
   p = NULL;
+  acquire(&ptable.lock);
   for (i = 0; i <= MAX; i++){
     if ((p = pid_search(ptable.pLists.ready[i], pid))){
       remove_from_list(&ptable.pLists.ready[i], p);
       p->priority = priority;
       p->budget = BUDGET; 
       tail_add(&p);
+      release(&ptable.lock);
       return 1;
     }
   }
@@ -1276,6 +1277,7 @@ setpriority(int pid, int priority)
     p->priority = priority;
     p->budget = BUDGET; 
     tail_add(&p);
+      release(&ptable.lock);
     return 1;
   }
   if ((p = pid_search(ptable.pLists.running, pid))){
@@ -1283,6 +1285,7 @@ setpriority(int pid, int priority)
     p->priority = priority;
     p->budget = BUDGET; 
     tail_add(&p);
+      release(&ptable.lock);
     return 1;
   }
   if ((p = pid_search(ptable.pLists.sleep, pid))){
@@ -1290,8 +1293,10 @@ setpriority(int pid, int priority)
     p->priority = priority;
     p->budget = BUDGET; 
     tail_add(&p);
+      release(&ptable.lock);
     return 1;
   }
-  return 0;
+      release(&ptable.lock);
+  return -1;
 }
 #endif
