@@ -287,6 +287,10 @@ fork(void)
   pid = np->pid;
 
   // lock to force the compiler to emit the np->state write last.
+#ifdef CS333_P3P4
+  np->budget = BUDGET;
+  np->priority = 0;
+#endif
   acquire(&ptable.lock);
 #ifdef CS333_P3P4
     if (!remove_from_list(&ptable.pLists.embryo, np)){
@@ -566,7 +570,7 @@ scheduler(void)
     // Loop over process table looking for process to run.
     acquire(&ptable.lock);
     // P4
-    if (ptable.PromoteAtTime >= ticks && MAX){
+    if (ptable.PromoteAtTime <= ticks && MAX){
       // promote
       int n;
       n = 0;
@@ -679,6 +683,7 @@ yield(void)
 #ifdef CS333_P3P4
   struct proc * p = proc;
   if(!remove_from_list(&ptable.pLists.running, p)){
+    cprintf("%s\n", p->name);
     panic("yielding process not in running list!");
   }
   assertState(p, RUNNING);
@@ -1264,6 +1269,8 @@ setpriority(int pid, int priority)
   acquire(&ptable.lock);
   for (i = 0; i <= MAX; i++){
     if ((p = pid_search(ptable.pLists.ready[i], pid))){
+      if (p->priority == priority)
+        return 1;
       remove_from_list(&ptable.pLists.ready[i], p);
       p->priority = priority;
       p->budget = BUDGET; 
@@ -1273,27 +1280,27 @@ setpriority(int pid, int priority)
     }
   }
   if ((p = pid_search(ptable.pLists.embryo, pid))){
-    remove_from_list(&ptable.pLists.embryo, p);
+    //remove_from_list(&ptable.pLists.embryo, p);
     p->priority = priority;
     p->budget = BUDGET; 
-    tail_add(&p);
-      release(&ptable.lock);
+    //tail_add(&p);
+    release(&ptable.lock);
     return 1;
   }
   if ((p = pid_search(ptable.pLists.running, pid))){
-    remove_from_list(&ptable.pLists.running, p);
+    //remove_from_list(&ptable.pLists.running, p);
     p->priority = priority;
     p->budget = BUDGET; 
-    tail_add(&p);
-      release(&ptable.lock);
+    //tail_add(&p);
+    release(&ptable.lock);
     return 1;
   }
   if ((p = pid_search(ptable.pLists.sleep, pid))){
-    remove_from_list(&ptable.pLists.sleep, p);
+    //remove_from_list(&ptable.pLists.sleep, p);
     p->priority = priority;
     p->budget = BUDGET; 
-    tail_add(&p);
-      release(&ptable.lock);
+    //tail_add(&p);
+    release(&ptable.lock);
     return 1;
   }
       release(&ptable.lock);

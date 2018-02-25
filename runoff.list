@@ -97,3 +97,4 @@ wait.c
 zfree.c
 kfree.c
 rrobin.c
+countforever.c

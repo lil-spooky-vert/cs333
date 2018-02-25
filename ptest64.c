@@ -37,6 +37,7 @@ main (int argc, char * argv[])
       kill(pid);
       exit();
     }
+  setpriority(getpid(), 2);
   }
   for (i = 0; i < 4; ++i){
     int result;

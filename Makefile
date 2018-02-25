@@ -203,6 +203,7 @@ UPROGS=\
 	_zfree\
 	_kfree\
 	_rrobin\
+	_countforever\
 
 UPROGS += $(CS333_UPROGS) $(CS333_TPROGS)
 
