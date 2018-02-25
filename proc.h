@@ -78,6 +78,10 @@ struct proc {
   uint cpu_ticks_in;           // ticks when scheduled
 #endif
 #ifdef CS333_P3P4
+  // P4
+  uint budget;                 // tick budget
+  uint priority;               // process priority
+  // end P4
   struct proc * next;          // next pointer
 #endif
 };
