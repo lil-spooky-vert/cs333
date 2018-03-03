@@ -98,3 +98,4 @@ zfree.c
 kfree.c
 rrobin.c
 countforever.c
+setpriority.c

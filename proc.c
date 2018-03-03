@@ -570,7 +570,8 @@ scheduler(void)
     // Loop over process table looking for process to run.
     acquire(&ptable.lock);
     // P4
-    if (ptable.PromoteAtTime <= ticks && MAX){
+    if ((ptable.PromoteAtTime <= ticks) && MAX){
+      //cprintf("error! promotion!\n");
       // promote
       int n;
       n = 0;
@@ -615,6 +616,7 @@ scheduler(void)
         // Process is done running for now.
         // It should have changed its p->state before coming back.
         proc = 0;
+        break;
       }
       else{
         priority++;
@@ -1021,10 +1023,15 @@ readydump()
 {
   struct proc * current;
   int i;
-  cprintf("Ready List Processes %d:\n", MAX);
+  cprintf("Ready List Processes:\n");
+  acquire(&ptable.lock);
   for (i = 0; i <= MAX; i++){
     current = ptable.pLists.ready[i];
+    if (i != MAX)
     cprintf("%d: ", i);
+    else
+    cprintf("MAX: ");
+
     if (!current){
       cprintf("empty list\n");
       continue;
@@ -1035,6 +1042,7 @@ readydump()
     }
     cprintf("(%d, %d)\n", current->pid, current->budget);
   }
+  release(&ptable.lock);
 }
 
 void
@@ -1113,8 +1121,10 @@ tail_add(struct proc ** p)
     return 0;
   if ((*p)->budget == 0){
     (*p)->budget = BUDGET;
-    if ((*p)->priority != MAX)
+    if ((*p)->priority != MAX){
+      //cprintf("error! demotion!\n");
       (*p)->priority++;
+    }
   }
   current = ptable.pLists.ready[(*p)->priority];
   if (!current){
@@ -1269,12 +1279,18 @@ setpriority(int pid, int priority)
   acquire(&ptable.lock);
   for (i = 0; i <= MAX; i++){
     if ((p = pid_search(ptable.pLists.ready[i], pid))){
-      if (p->priority == priority)
+      if (p->priority == priority){
+        release(&ptable.lock);
         return 1;
+      }
       remove_from_list(&ptable.pLists.ready[i], p);
+      if (p->priority != i)
+        panic("assert fail at setpriority - remove list\n");
       p->priority = priority;
       p->budget = BUDGET; 
       tail_add(&p);
+      if (p->priority != priority)
+        panic("assert fail at setpriority - add list\n");
       release(&ptable.lock);
       return 1;
     }

@@ -20,7 +20,7 @@
 #endif
 #ifdef CS333_P3P4
 #define NULL          0  // sets NULL value
-#define MAX           3  // max priority value P4
-#define BUDGET        2000 // tick budget P4
-#define TICKS_TO_PROMOTE 10000
+#define MAX           9 // max priority value P4
+#define BUDGET        100000 // tick budget P4
+#define TICKS_TO_PROMOTE 300000
 #endif
